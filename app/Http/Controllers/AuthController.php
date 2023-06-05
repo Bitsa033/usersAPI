@@ -2,12 +2,33 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUsersRequest;
+use App\Http\Resources\Users as ResourcesUsers;
+use App\Models\User;
 use App\Trait\HttpResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
     use HttpResponse;
+
+    function register(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|name',
+            'email' => 'required|email',
+            ]);
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make('password')
+        ]);
+        return $this->success([
+            'user'=>$user,
+            'token'=>$user->createToken('API key token pour '.$user->name)->plainTextToken
+        ]);
+    }
 
     function login()
     {
