@@ -13,12 +13,13 @@ class AuthController extends Controller
 {
     use HttpResponse;
 
-    function register(Request $request)
+    function register(StoreUsersRequest $request)
     {
         $request->validate([
-            'email' => 'required|name',
-            'email' => 'required|email',
-            ]);
+            'name'=>'required',
+            'email'=>'required|email|unique:users',
+            'password'=>'required',
+        ]);
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -38,5 +39,11 @@ class AuthController extends Controller
     function logout()
     {
         return 'Cette méthode permet de se déconnecter';
+    }
+
+    function getAll()
+    {
+        $user = User::all();
+        return new ResourcesUsers($user);
     }
 }

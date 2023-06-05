@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\TacheController;
-use Illuminate\Http\Request;
+use App\Models\Users;
+use App\Http\Requests\StoreUsersRequest;
+use App\Http\Requests\UpdateUsersRequest;
 
-class TacheControllerController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -26,7 +27,7 @@ class TacheControllerController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreUsersRequest $request)
     {
         //
     }
@@ -34,7 +35,7 @@ class TacheControllerController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(TacheController $tacheController)
+    public function show(Users $users)
     {
         //
     }
@@ -42,7 +43,7 @@ class TacheControllerController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(TacheController $tacheController)
+    public function edit(Users $users)
     {
         //
     }
@@ -50,7 +51,7 @@ class TacheControllerController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, TacheController $tacheController)
+    public function update(UpdateUsersRequest $request, Users $users)
     {
         //
     }
@@ -58,7 +59,7 @@ class TacheControllerController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(TacheController $tacheController)
+    public function destroy(Users $users)
     {
         //
     }
