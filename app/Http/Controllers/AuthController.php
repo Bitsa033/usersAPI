@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LogUserRequet;
 use App\Http\Requests\StoreUsersRequest;
 use App\Http\Resources\Users as ResourcesUsers;
 use App\Models\User;
@@ -15,11 +16,7 @@ class AuthController extends Controller
 
     function register(StoreUsersRequest $request)
     {
-        $request->validate([
-            'name'=>'required',
-            'email'=>'required|email|unique:users',
-            'password'=>'required',
-        ]);
+        $request->validated($request->all());
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -33,7 +30,9 @@ class AuthController extends Controller
 
     function login()
     {
+        
         return 'Cette méthode permet de se connecter';
+        
     }
 
     function logout()
