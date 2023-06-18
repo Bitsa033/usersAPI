@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnimalController;
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TacheController;
@@ -20,8 +21,18 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::post('register',[AuthController::class,'register']);
-Route::post('login',[AuthController::class,'login']);
-Route::post('logout',[AuthController::class,'logout']);
-Route::get('users',[AuthController::class,'getAll']);
-Route::resource('tache',TacheController::class);
+// API Users
+Route::get('users/get',[AuthController::class,'getAll']);
+Route::get('users/get/{id}',[AuthController::class,'getOne']);
+Route::post('users/store',[AuthController::class,'store']);
+Route::post('users/login',[AuthController::class,'login']);
+Route::post('users/logout',[AuthController::class,'logout']);
+// API Animals
+Route::get('animals/get', [AnimalController::class,'getAll']);
+Route::get('animals/get/{id}', [AnimalController::class,'getOne']);
+Route::get('animals/get/byName/{name}', [AnimalController::class,'getByName']);
+Route::post('animals/store', [AnimalController::class,'store']);
+Route::put('animals/update', [AnimalController::class,'update']);
+Route::delete('animals/delete', [AnimalController::class,'delete']);
+// API tache
+Route::resource('tache', TacheController::class);
