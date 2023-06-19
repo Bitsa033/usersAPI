@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreAnimalRequest;
 use App\Models\Animal;
 use App\Http\Requests\UpdateAnimalRequest;
 use App\Http\Resources\Animal as ResourcesAnimal;
@@ -53,7 +54,7 @@ class AnimalController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreAnimalRequest $request)
     {
         if (!empty($request->get('nom')) && !empty($request->get('prix')) &&
          !empty($request->get('qte'))) {
