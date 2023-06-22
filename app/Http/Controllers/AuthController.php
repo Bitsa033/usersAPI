@@ -53,6 +53,17 @@ class AuthController extends Controller
         
     }
 
+    function update(Request $request,$id){
+        $user= User::find($id);
+        $user->update(["name"=>$request->name]);
+
+        return $this->success([
+            'user'=>$user,
+            'token'=>$user->createToken('API key token pour '.$user->name)->plainTextToken
+        ]);
+        
+    }
+
     function login()
     {
         

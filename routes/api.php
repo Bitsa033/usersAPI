@@ -25,6 +25,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('users/get',[AuthController::class,'getAll']);
 Route::get('users/get/{id}',[AuthController::class,'getOne']);
 Route::post('users/store',[AuthController::class,'store']);
+Route::put('users/update/{id}',[AuthController::class,'update']);
 Route::post('users/login',[AuthController::class,'login']);
 Route::post('users/logout',[AuthController::class,'logout']);
 // API Animals
