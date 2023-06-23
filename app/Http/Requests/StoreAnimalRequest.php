@@ -22,9 +22,9 @@ class StoreAnimalRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nom'=>'required',
-            'prix'=>'required',
-            'qte'=>'required'
+            'nom'=>'required|min:3|max:20',
+            'prix'=>'required|integer|min:3',
+            'qte'=>'required|integer|min:1'
         ];
     }
 }

@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUsersRequest;
 use App\Http\Resources\User as ResourcesUsers;
 use App\Models\User;
 use App\Trait\HttpResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -27,40 +27,53 @@ class AuthController extends Controller
         if (!is_numeric($id)) {
             return "Le paramètre id doit etre un nombre";
         } else {
-            $user= DB::table('users')->where('id', '=', $id)->get();
+            $user= User::find($id);
             return new ResourcesUsers($user);
         }
         
     }
 
-    function store(Request $request)
+    function store(StoreUsersRequest $request)
     {
-        if (!empty($request->get('name')) && !empty($request->get('email')) && !empty($request->get('password'))) {
-            $user = User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => Hash::make('password')
-            ]);
-            return $this->success([
-                'user'=>$user,
-                'token'=>$user->createToken('API key token pour '.$user->name)->plainTextToken
-            ]);
-            # code...
-        } else {
-            return "Verifiez vos champs: le nom, l'email et le password 
-            ne doivent pas etre vide ";
-        }
+        $request->validated($request->all());
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make('password')
+        ]);
+        return $this->success([
+            'user'=>$user,
+            'token'=>$user->createToken('API key token pour '.$user->name)->plainTextToken
+        ]);
         
     }
 
-    function update(Request $request,$id){
+    function update(StoreUsersRequest $request,$id){
+        $request->validated($request->all());
         $user= User::find($id);
-        $user->update(["name"=>$request->name]);
+        $user->update([
+            "name"=>$request->name,
+            "email"=>$request->email
+        ]);
 
         return $this->success([
             'user'=>$user,
             'token'=>$user->createToken('API key token pour '.$user->name)->plainTextToken
         ]);
+        
+    }
+
+    public function delete($id)
+    {
+        if (!is_numeric($id)) {
+            return "Le paramètre id doit etre un nombre";
+        } else {
+            $user=User::destroy($id);
+            return $this->success([
+                'user'=>$user
+                // 'token'=>$user->remo('API key token pour '.$user->name)->plainTextToken
+            ]);
+        }
         
     }
 

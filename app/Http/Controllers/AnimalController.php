@@ -4,10 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreAnimalRequest;
 use App\Models\Animal;
-use App\Http\Requests\UpdateAnimalRequest;
 use App\Http\Resources\Animal as ResourcesAnimal;
 use App\Trait\HttpResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class AnimalController extends Controller
@@ -24,21 +22,21 @@ class AnimalController extends Controller
     }
 
     /**
-     * Display the specified animal resource.
+     * Display the specified animal resource by id.
      */
     public function getOne($id)
     {
         if (!is_numeric($id)) {
             return "Le paramètre id doit etre un nombre";
         } else {
-            $animal= DB::table('animals')->where('id', '=', $id)->get();
+            $animal= Animal::find($id);
             return new ResourcesAnimal($animal);
         }
         
     }
 
     /**
-     * Display the specified animal resource.
+     * Display the specified animal resource by name.
      */
     public function getByName($name)
     {
@@ -56,40 +54,51 @@ class AnimalController extends Controller
      */
     public function store(StoreAnimalRequest $request)
     {
-        if (!empty($request->get('nom')) && !empty($request->get('prix')) &&
-         !empty($request->get('qte'))) {
-            
-            $animal=Animal::create([
-                'nom'=>$request->nom,
-                'prix'=>$request->prix,
-                'qte'=>$request->qte
-            ]);
-    
-            return $this->success([
-                'animal'=>$animal,
-                'message'=>"Animal enregistré avec succès ..."
-            ]);
-        }
-        else {
-            return "Verifiez vos champs: le nom, le prix et la 
-            qté ne doivent pas etre vide ...";
-        }
+        $request->validated($request->all());
+        $animal=Animal::create([
+            'nom'=>$request->nom,
+            'prix'=>$request->prix,
+            'qte'=>$request->qte
+        ]);
+
+        return $this->success([
+            'animal'=>$animal
+        ]);
 
     }
     
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateAnimalRequest $request, Animal $animal)
-    {
-        //
+    function update(StoreAnimalRequest $request,$id){
+        $request->validated($request->all());
+        $animal= Animal::find($id);
+        $animal->update([
+            "nom"=>$request->nom,
+            "prix"=>$request->prix,
+            "qte"=>$request->qte
+        ]);
+
+        return $this->success([
+            'animal'=>$animal
+        ]);
+        
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Animal $animal)
+    public function delete($id)
     {
-        //
+        if (!is_numeric($id)) {
+            return "Le paramètre id doit etre un nombre";
+        } else {
+            $animal=Animal::destroy($id);
+            return $this->success([
+                'animal'=>$animal
+                // 'token'=>$user->remo('API key token pour '.$user->name)->plainTextToken
+            ]);
+        }
+        
     }
 }
