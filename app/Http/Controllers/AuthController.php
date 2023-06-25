@@ -97,8 +97,8 @@ class AuthController extends Controller
 
     function logout()
     {
-        
-        return $this->logoutUser('','Vous etes déconnecté',205);
+        $user = Auth::user();
+        return $this->logoutUser($user,'Vous etes déconnecté',205);
     }
 
 }

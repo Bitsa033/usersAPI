@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Promotion;
+use App\Http\Requests\QteOut;
 use App\Http\Requests\StoreAnimalRequest;
 use App\Models\Animal;
 use App\Http\Resources\Animal as ResourcesAnimal;
@@ -76,7 +78,65 @@ class AnimalController extends Controller
         $animal->update([
             "nom"=>$request->nom,
             "prix"=>$request->prix,
-            "qte"=>$request->qte
+            "qte"=>$request->qte,
+            "promotion"=>$request->promotion
+        ]);
+
+        return $this->success([
+            'animal'=>$animal
+        ]);
+        
+    }
+
+    /**
+     * Update the qty resource in storage.
+     */
+    function addQte(QteOut $request,$id){
+        $request->validated($request->all());
+        $animal= Animal::find($id);
+        $qte=$animal['qte'];
+        $added= $qte + $request->qte;
+
+        $animal->update([
+            "qte"=>$added
+        ]);
+
+        return $this->success([
+            'animal'=>$animal
+        ]);
+        
+    }
+
+    /**
+     * Update the qty resource in storage.
+     */
+    function removeQte(QteOut $request,$id){
+        $request->validated($request->all());
+        $animal= Animal::find($id);
+        $qte=$animal['qte'];
+        $removed= $qte - $request->qte;
+
+        $animal->update([
+            "qte"=>$removed
+        ]);
+
+        return $this->success([
+            'animal'=>$animal
+        ]);
+        
+    }
+
+    /**
+     * Update the qty resource in storage.
+     */
+    function promotion(Promotion $request,$id){
+        $request->validated($request->all());
+        $animal= Animal::find($id);
+        $qte=$animal['qte'];
+        $removed= $qte - $request->qte;
+
+        $animal->update([
+            "promotion"=>$request->promotion
         ]);
 
         return $this->success([

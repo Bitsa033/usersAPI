@@ -13,5 +13,6 @@ class Animal extends Model
         'nom',
         'prix',
         'qte',
+        'promotion'
     ];
 }
