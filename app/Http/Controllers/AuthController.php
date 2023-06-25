@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUsersRequest;
+use App\Http\Requests\UpdateUsersRequest;
 use App\Http\Resources\User as ResourcesUsers;
 use App\Models\User;
 use App\Trait\HttpResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -39,7 +41,7 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make('password')
+            'password' => Hash::make($request->password)
         ]);
         return $this->success([
             'user'=>$user,
@@ -48,7 +50,7 @@ class AuthController extends Controller
         
     }
 
-    function update(StoreUsersRequest $request,$id){
+    function update(UpdateUsersRequest $request,$id){
         $request->validated($request->all());
         $user= User::find($id);
         $user->update([
@@ -57,8 +59,7 @@ class AuthController extends Controller
         ]);
 
         return $this->success([
-            'user'=>$user,
-            'token'=>$user->createToken('API key token pour '.$user->name)->plainTextToken
+            'user'=>$user
         ]);
         
     }
@@ -77,16 +78,27 @@ class AuthController extends Controller
         
     }
 
-    function login()
+    function login(Request $request)
     {
-        
-        return 'Cette méthode permet de se connecter';
+        $credentials=["email"=>$request->email, "password"=>$request->password];
+        if (!Auth::attempt($credentials)) {
+            return $this->erreur($credentials,'Email ou mot de passe incorect',201);
+        }
+
+        $user = User::where("email",$request->email)->first();
+
+        return $this->loginUser([
+            'user'=>$user,
+            'token'=>$user->createToken('API key token pour '.$user->name)->plainTextToken
+        ]);
+
         
     }
 
     function logout()
     {
-        return 'Cette méthode permet de se déconnecter';
+        
+        return $this->logoutUser('','Vous etes déconnecté',205);
     }
 
 }
