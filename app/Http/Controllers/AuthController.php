@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginUserRequet;
 use App\Http\Requests\StoreUsersRequest;
 use App\Http\Requests\UpdateUsersRequest;
 use App\Http\Resources\User as ResourcesUsers;
 use App\Models\User;
 use App\Trait\HttpResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -15,7 +15,7 @@ class AuthController extends Controller
 {
     use HttpResponse;
 
-    function getAll()
+    function index()
     {
         $user = User::all();
         return new ResourcesUsers($user);
@@ -24,7 +24,7 @@ class AuthController extends Controller
     /**
      * Display the specified animal resource.
      */
-    public function getOne($id)
+    public function show($id)
     {
         if (!is_numeric($id)) {
             return "Le paramètre id doit etre un nombre";
@@ -40,12 +40,13 @@ class AuthController extends Controller
         $request->validated($request->all());
         $user = User::create([
             'name' => $request->name,
+            'phone' => $request->phone,
+            'adress' => $request->adress,
             'email' => $request->email,
             'password' => Hash::make($request->password)
         ]);
         return $this->success([
-            'user'=>$user,
-            'token'=>$user->createToken('API key token pour '.$user->name)->plainTextToken
+            'user'=>$user
         ]);
         
     }
@@ -55,6 +56,8 @@ class AuthController extends Controller
         $user= User::find($id);
         $user->update([
             "name"=>$request->name,
+            'phone' => $request->phone,
+            'adress' => $request->adress,
             "email"=>$request->email
         ]);
 
@@ -78,7 +81,7 @@ class AuthController extends Controller
         
     }
 
-    function login(Request $request)
+    function login(LoginUserRequet $request)
     {
         $credentials=["email"=>$request->email, "password"=>$request->password];
         if (!Auth::attempt($credentials)) {
@@ -98,6 +101,7 @@ class AuthController extends Controller
     function logout()
     {
         $user = Auth::user();
+
         return $this->logoutUser($user,'Vous etes déconnecté',205);
     }
 

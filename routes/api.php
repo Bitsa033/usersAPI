@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\AnimalController;
+use App\Http\Controllers\ProduitController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TacheController;
 use Illuminate\Http\Request;
@@ -20,35 +20,37 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
 // Routes protégées
+
 // Route::group(['middleware'=>'auth:sanctum'],function(){
 //     // User
     
 //     // Animal
     
 // });
+
 // Routes publiques
+
 // User
-Route::post('users/store',[AuthController::class,'store']);
-Route::post('users/login',[AuthController::class,'login']);
-Route::get('users/get',[AuthController::class,'getAll']);
-Route::get('users/get/{id}',[AuthController::class,'getOne']);
+Route::post('user/store',[AuthController::class,'store']);
+Route::post('user/login',[AuthController::class,'login']);
+Route::post('user/logout',[AuthController::class,'logout']);
+Route::get('users',[AuthController::class,'index']);
+Route::get('user/{id}',[AuthController::class,'show']);
+Route::put('user/update/{id}',[AuthController::class,'update']);
+Route::delete('user/delete/{id}',[AuthController::class,'delete']);
 
-Route::put('users/update/{id}',[AuthController::class,'update']);
-Route::delete('users/delete/{id}',[AuthController::class,'delete']);
-Route::post('users/logout',[AuthController::class,'logout']);
+// Produit
+Route::post('produit/store', [ProduitController::class,'store']);
+Route::put('produit/update/{id}', [ProduitController::class,'update']);
+Route::delete('produit/delete/{id}', [ProduitController::class,'delete']);
+Route::put('produit/update/promotion/{id}', [ProduitController::class,'setPromotion']);
+Route::put('produit/qty/add/{id}', [ProduitController::class,'addQte']);
+Route::put('produit/qty/withdrap/{id}', [ProduitController::class,'removeQte']);
+Route::get('produits', [ProduitController::class,'index']);
+Route::get('produit/{id}', [ProduitController::class,'show']);
+Route::get('produit/showbyname/{name}', [ProduitController::class,'showByName']);
 
-// Animal
-
-Route::post('animals/store', [AnimalController::class,'store']);
-Route::put('animals/update/{id}', [AnimalController::class,'update']);
-Route::delete('animals/delete/{id}', [AnimalController::class,'delete']);
-Route::put('animals/update/promotion/{id}', [AnimalController::class,'promotion']);
-Route::put('animals/update/qte/in/{id}', [AnimalController::class,'addQte']);
-Route::put('animals/update/qte/out/{id}', [AnimalController::class,'removeQte']);
-
-Route::get('animals/get', [AnimalController::class,'getAll']);
-Route::get('animals/get/{id}', [AnimalController::class,'getOne']);
-Route::get('animals/get/byName/{name}', [AnimalController::class,'getByName']);
 // API tache
 Route::resource('tache', TacheController::class);

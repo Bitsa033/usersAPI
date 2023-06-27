@@ -1,81 +1,82 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Http\Requests\Promotion;
 use App\Http\Requests\QteOut;
-use App\Http\Requests\StoreAnimalRequest;
-use App\Models\Animal;
-use App\Http\Resources\Animal as ResourcesAnimal;
+use App\Http\Requests\StoreProduitRequest;
+use App\Http\Requests\UpdateProduitRequest;
+use App\Http\Resources\Produit as ResourcesProduit;
+use App\Models\Produit;
 use App\Trait\HttpResponse;
 use Illuminate\Support\Facades\DB;
 
-class AnimalController extends Controller
+class ProduitController extends Controller
 {
     use HttpResponse;
 
     /**
-     * Display all animals resource
+     * Display all products
      */
-    public function getAll()
+    public function index()
     {
-       $animal= Animal::all();
-       return new ResourcesAnimal($animal);
+       $produit= Produit::all();
+       return new ResourcesProduit($produit);
     }
 
     /**
-     * Display the specified animal resource by id.
+     * Display the specified product by id.
      */
-    public function getOne($id)
+    public function show($id)
     {
         if (!is_numeric($id)) {
             return "Le paramètre id doit etre un nombre";
         } else {
-            $animal= Animal::find($id);
-            return new ResourcesAnimal($animal);
+            $produit= Produit::find($id);
+            return new ResourcesProduit($produit);
         }
         
     }
 
     /**
-     * Display the specified animal resource by name.
+     * Display the specified product by name.
      */
-    public function getByName($name)
+    public function showByName($name)
     {
         if (!is_string($name)) {
             return "Le paramètre nom doit etre un string";
         } else {
-            $animal= DB::table('animals')->where('nom', '=', $name)->get();
-            return new ResourcesAnimal($animal);
+            $produit= DB::table('produits')->where('nom', $name)->get();
+            return new ResourcesProduit($produit);
         }
         
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created product in storage.
      */
-    public function store(StoreAnimalRequest $request)
+    public function store(StoreProduitRequest $request)
     {
         $request->validated($request->all());
-        $animal=Animal::create([
+        $produit=Produit::create([
             'nom'=>$request->nom,
             'prix'=>$request->prix,
-            'qte'=>$request->qte
+            'qte'=>$request->qte,
+            'promotion'=>$request->promotion
         ]);
 
         return $this->success([
-            'animal'=>$animal
+            'produit'=>$produit
         ]);
 
     }
     
     /**
-     * Update the specified resource in storage.
+     * Update the specified product in storage.
      */
-    function update(StoreAnimalRequest $request,$id){
+    function update(UpdateProduitRequest $request,$id){
         $request->validated($request->all());
-        $animal= Animal::find($id);
-        $animal->update([
+        $produit= Produit::find($id);
+        $produit->update([
             "nom"=>$request->nom,
             "prix"=>$request->prix,
             "qte"=>$request->qte,
@@ -83,79 +84,77 @@ class AnimalController extends Controller
         ]);
 
         return $this->success([
-            'animal'=>$animal
+            'produit'=>$produit
         ]);
         
     }
 
     /**
-     * Update the qty resource in storage.
+     * Add the qty of product in storage.
      */
     function addQte(QteOut $request,$id){
         $request->validated($request->all());
-        $animal= Animal::find($id);
-        $qte=$animal['qte'];
+        $produit= Produit::find($id);
+        $qte=$produit['qte'];
         $added= $qte + $request->qte;
 
-        $animal->update([
+        $produit->update([
             "qte"=>$added
         ]);
 
         return $this->success([
-            'animal'=>$animal
+            'produit'=>$produit
         ]);
         
     }
 
     /**
-     * Update the qty resource in storage.
+     * Withdrap the qty of product in storage.
      */
     function removeQte(QteOut $request,$id){
         $request->validated($request->all());
-        $animal= Animal::find($id);
-        $qte=$animal['qte'];
+        $produit= Produit::find($id);
+        $qte=$produit['qte'];
         $removed= $qte - $request->qte;
 
-        $animal->update([
+        $produit->update([
             "qte"=>$removed
         ]);
 
         return $this->success([
-            'animal'=>$animal
+            'produit'=>$produit
         ]);
         
     }
 
     /**
-     * Update the qty resource in storage.
+     * Set the promotion of product in storage.
      */
-    function promotion(Promotion $request,$id){
+    function SetPromotion(Promotion $request,$id){
         $request->validated($request->all());
-        $animal= Animal::find($id);
-        $qte=$animal['qte'];
-        $removed= $qte - $request->qte;
+        $produit= Produit::find($id);
 
-        $animal->update([
+        $produit->update([
             "promotion"=>$request->promotion
         ]);
 
         return $this->success([
-            'animal'=>$animal
+            'produit'=>$produit
         ]);
         
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specific product from storage.
      */
     public function delete($id)
     {
         if (!is_numeric($id)) {
             return "Le paramètre id doit etre un nombre";
         } else {
-            $animal=Animal::destroy($id);
+            $produit=Produit::destroy($id);
             return $this->success([
-                'animal'=>$animal
+                'produit'=>$produit
                 // 'token'=>$user->remo('API key token pour '.$user->name)->plainTextToken
             ]);
         }

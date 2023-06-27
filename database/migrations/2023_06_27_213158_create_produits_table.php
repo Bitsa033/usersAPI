@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('animals', function (Blueprint $table) {
+        Schema::create('produits', function (Blueprint $table) {
             $table->increments('id');
             $table->string('nom');
             $table->double('prix');
             $table->double('qte');
-            $table->string('promotion')->default('off');
-            $table->dateTime('dateCreation')->default(now());
+            $table->string('promotion')->default(true);
             $table->timestamps();
         });
     }
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('animals');
+        Schema::dropIfExists('produits');
     }
 };
